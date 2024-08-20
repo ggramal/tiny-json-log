@@ -34,7 +34,7 @@ this will print to stderr
 
 ## Json message
 
-If your message string is in json format library will convert it to json format and nest it under `message` key
+If your message string is in json format, library will convert it to json and nest it under `message` key
 
 ```
 import logging
