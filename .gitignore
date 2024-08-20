@@ -1,0 +1,7 @@
+*.egg-info
+*.whl
+*.pyc
+dist/*
+**/__pycache__
+#Vim
+*.swp
