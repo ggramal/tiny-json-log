@@ -65,6 +65,37 @@ this will print to stderr something like
 {"severity": "INFO", "logger": "root", "message": {"src": "module.some_class", "userid": "32b8bf63-3958-4caa-b566-a500c898e429", "nested": {"some_nested_attr": 123}}}
 ```
 
+you can also pass `merge_message=True` to `JSONFormatter` constructor and it will merge you JSON message with other logRecord attributes
+
+```
+import logging
+import json
+import uuid
+from tiny_json_log import JSONFormatter
+
+log_dict = {
+    "src": "module.some_class",
+    "userid": f"{uuid.uuid4()}",
+    "nested": {
+        "some_nested_attr": 123
+    }
+}
+
+handler = logging.StreamHandler()
+handler.setFormatter(JSONFormatter(merge_message=True))
+root = logging.getLogger()
+root.addHandler(handler)
+root.setLevel("DEBUG")
+
+root.info(json.dumps(log_dict))
+```
+
+will print
+
+```
+{"severity": "INFO", "logger": "root", "src": "module.some_class", "userid": "f10a8b6a-86c1-4280-8685-421ceea58811", "nested": {"some_nested_attr": 123}}
+```
+
 ## Formatting 
 
 You can also pass a format string to control what [logRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes) are printed. Format string is a space separate list of logRecord attrs enclosed in `{}`. For example 
