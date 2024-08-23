@@ -98,7 +98,7 @@ will print
 
 ## Formatting 
 
-You can also pass a format string to control what [logRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes) are printed. Format string is a space separate list of logRecord attrs enclosed in `{}`. For example 
+You can also pass a format string to control what [logRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes) are printed. Format string is a space separated list of logRecord attrs enclosed in `{}`. For example 
 
 
 ```
@@ -124,7 +124,7 @@ this will print to stderr
 {"levelname": "ERROR", "message": "informative message", "name": "root"}
 ```
 
-By default key names of a log are equal logRecord attribute names. You can change this behaviour by specifing `<custom attr key>={<some logRecord attr>}` for example
+By default log key names are equal to logRecord attribute names. You can change this behaviour by specifing `<custom attr key>={<some logRecord attr>}` for example
 
 ```
 import logging
