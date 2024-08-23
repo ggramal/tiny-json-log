@@ -51,6 +51,15 @@ class JsonStyle(logging.StrFormatStyle):
     default_format = "severity={levelname} logger={name} {message}"
     validation_pattern = re.compile(r"^((\w+=)*\{\w+\})( (\w+=)*\{\w+\})*$")
 
+    def __init__(
+        self,
+        merge_message: bool,
+        fmt: str,
+        defaults: tp.Dict[str, tp.Any] | None = None,
+    ) -> None:
+        self._merge_message = merge_message
+        super().__init__(fmt, defaults=defaults)
+
     def _format(self, record: logging.LogRecord) -> str:
         if defaults := self._defaults:
             values = defaults | record.__dict__
@@ -64,11 +73,18 @@ class JsonStyle(logging.StrFormatStyle):
             attr = splitted[-1].strip("{}")
             key = splitted[0].strip("{}")
 
-            format_dict[key] = values[attr]
+            if (
+                attr == "message"
+                and self._merge_message
+                and isinstance(values[attr], dict)
+            ):
+                format_dict = format_dict | values[attr]
+            else:
+                format_dict[key] = values[attr]
 
         return json.dumps(format_dict)
 
-    def validate(self):
+    def validate(self) -> None:
         """Validate the input format, ensure it is the correct string formatting style"""
         if not self.validation_pattern.search(self._fmt):
             raise ValueError(
@@ -87,9 +103,10 @@ class JSONFormatter(logging.Formatter):
         fmt: str = None,
         datefmt: str = None,
         validate: bool = True,
+        merge_message: bool = False,
         defaults: tp.Dict[str, tp.Any] | None = None,
     ) -> None:
-        self._style = JsonStyle(fmt, defaults=defaults)
+        self._style = JsonStyle(merge_message, fmt, defaults)
 
         if validate:
             self._style.validate()

@@ -1,7 +1,14 @@
 import logging
 import pytest
 import json
+import uuid
 from tiny_json_log import JSONFormatter
+
+LOG_DICT = {
+    "src": "module.some_class",
+    "userid": str(uuid.uuid4()),
+    "nested": {"some_nested_attr": 123},
+}
 
 
 class CustomHandler(logging.Handler):
@@ -18,6 +25,21 @@ class TestJSONFormatter:
         logging.info("test")
         record = json.loads(test_handler.log_record)
         assert "test" == record["message"]
+
+    def test_json_message(self):
+        logging.info(json.dumps(LOG_DICT))
+        record = json.loads(test_handler.log_record)
+        assert 123 == record["message"]["nested"]["some_nested_attr"]
+
+    def test_json_message_merge(self):
+        test_logger = logging.getLogger("test_logger")
+        test_handler_message_merge = CustomHandler()
+        test_handler_message_merge.setFormatter(JSONFormatter(merge_message=True))
+        test_logger.addHandler(test_handler_message_merge)
+
+        test_logger.info(json.dumps(LOG_DICT))
+        record = json.loads(test_handler_message_merge.log_record)
+        assert 123 == record["nested"]["some_nested_attr"]
 
     @pytest.mark.parametrize(
         "fmt, record_key, record_value",
@@ -57,6 +79,7 @@ class TestJSONFormatter:
     def test_validation_error(self, invalid_fmt):
         with pytest.raises(ValueError) as e:
             f = JSONFormatter(invalid_fmt)
+
 
 test_handler = CustomHandler()
 test_handler.setFormatter(JSONFormatter())
