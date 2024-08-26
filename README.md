@@ -2,6 +2,20 @@
 
 Compact and easy to use json logging lib
 
+## Installing
+
+**Pip**
+
+```
+pip install tiny-json-log
+```
+
+**Pypi**
+
+https://pypi.org/project/tiny-json-log/
+
+
+
 ## Usage
 
 To write logs in json simply pass an instance of `JSONFormatter` class to your handler
